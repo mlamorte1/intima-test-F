@@ -566,6 +566,20 @@ supabase.from("results").insert([{
   physicalPercent,
   emotionalPercent
 }]);
+// ===== Send results email =====
+if (capturedEmail) {
+  fetch("/api/send-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: capturedEmail,
+      resultId: combined // simple identifier for now
+    })
+  })
+  .then(res => res.json())
+  .then(data => console.log("Email sent:", data))
+  .catch(err => console.error("Email error:", err));
+}
 
 
   showScreen("result");

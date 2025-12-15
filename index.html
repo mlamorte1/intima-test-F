@@ -54,13 +54,17 @@
   justify-content: center;
   margin: 0 auto 16px auto;
   box-shadow: 0 0 40px rgba(250, 204, 21, 0.25);
+  overflow: hidden; /* 🔑 THIS is the key */
 }
 
+
 .logo-circle img {
-  width: 70%;
+  width: 75%;
   height: auto;
   display: block;
+  object-fit: contain;
 }
+
 </style>
 </head>
 <body>

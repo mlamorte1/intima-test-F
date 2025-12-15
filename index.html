@@ -133,15 +133,54 @@
 
   <button class="btn" id="download-pdf-btn">Download PDF</button>
 </div>
+
 <!-- PDF TEMPLATE (hidden) -->
 <div id="pdf-template" style="
   display:none;
   background:#ffffff;
   color:#000000;
-  padding:40px;
-  width:600px;
-  font-family: Arial, sans-serif;
+  padding:48px;
+  width:700px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height:1.6;
 ">
+
+  <!-- HEADER -->
+  <div style="text-align:center; margin-bottom:24px;">
+    <img src="./intima-logo.png" style="width:80px; margin-bottom:12px;" />
+    <h1 style="margin:0; font-size:24px;">INTIMA® Suggestibility Profile</h1>
+    <p style="margin:4px 0 0; font-size:14px; color:#555;">
+      by Flowgenics Coaching
+    </p>
+  </div>
+
+  <hr style="margin:24px 0;">
+
+  <!-- NAME -->
+  <p id="pdf-name" style="font-size:16px; font-weight:bold;"></p>
+
+  <!-- SCORES -->
+  <div style="margin-top:16px;">
+    <p id="pdf-physical" style="font-size:18px; margin:8px 0;"></p>
+    <p id="pdf-emotional" style="font-size:18px; margin:8px 0;"></p>
+  </div>
+
+  <hr style="margin:24px 0;">
+
+  <!-- INTERPRETATION -->
+  <h3 id="pdf-title" style="font-size:20px; margin-bottom:8px;"></h3>
+  <p id="pdf-text" style="font-size:15px;"></p>
+
+  <!-- GUIDANCE -->
+  <h4 style="margin-top:24px;">Key Guidance</h4>
+  <ul id="pdf-guidance" style="padding-left:20px; font-size:14px;"></ul>
+
+  <!-- FOOTER -->
+  <p style="margin-top:32px; font-size:12px; color:#666; text-align:center;">
+    This report is confidential and intended for personal insight only.
+  </p>
+</div>
+
   <h1 style="text-align:center;">INTIMA by Flowgenics – Suggestibility Profile</h1>
   <p id="pdf-name"></p>
   <hr>

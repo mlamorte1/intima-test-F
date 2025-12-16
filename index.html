@@ -531,15 +531,27 @@ if (capturedEmail) {
     });
 }
 
-supabase.from("results").insert([{
-  name: participantName,
-  email: capturedEmail,
-  physicalRaw,
-  emotionalRaw,
-  combined,
-  physicalPercent,
-  emotionalPercent
-}]);
+(async () => {
+  const { data, error } = await supabase.from("results").insert([{
+    name: participantName,
+    email: capturedEmail,
+    physicalRaw,
+    emotionalRaw,
+    combined,
+    physicalPercent,
+    emotionalPercent
+  }]);
+
+  if (error) {
+    console.error("❌ Supabase insert error:", error);
+    alert("There was a problem saving your results. Please try again later.");
+  } else {
+    console.log("✅ Result saved to Supabase:", data);
+  }
+
+  showScreen("result");
+})();
+
 
 
   showScreen("result");
@@ -620,3 +632,4 @@ document.getElementById("lang-es").onclick = () => {
 </body>
 
 </html>
+

@@ -454,81 +454,64 @@ function answer(yes) {
 }
 
 async function finishQuiz() {
-document.querySelector("#screen-result h2").textContent =
-  `${participantName}, here are your results`;
+  document.querySelector("#screen-result h2").textContent =
+    `${participantName}, here are your results`;
 
-const physicalRaw = scoreQ1;
-const emotionalRaw = scoreQ2;
-const combined = physicalRaw + emotionalRaw;
+  const physicalRaw = scoreQ1;
+  const emotionalRaw = scoreQ2;
+  const combined = physicalRaw + emotionalRaw;
 
-const physicalPercent = lookupPhysicalPercent(physicalRaw, combined);
-const emotionalPercent = 100 - physicalPercent;
+  const physicalPercent = lookupPhysicalPercent(physicalRaw, combined);
+  const emotionalPercent = 100 - physicalPercent;
 
+  document.getElementById("result-physical").textContent =
+    `Physical: ${physicalPercent}%`;
+  document.getElementById("result-emotional").textContent =
+    `Emotional: ${emotionalPercent}%`;
 
-  document.getElementById("result-physical").textContent = `Physical: ${physicalPercent}%`;
-  document.getElementById("result-emotional").textContent = `Emotional: ${emotionalPercent}%`;
-
-const interp = INTERPRETATIONS[currentLang].find(
-  r => physicalPercent >= r.min && physicalPercent <= r.max
-);
+  const interp = INTERPRETATIONS[currentLang].find(
+    r => physicalPercent >= r.min && physicalPercent <= r.max
+  );
 
   document.getElementById("interpretation-title").textContent = interp.title;
   document.getElementById("interpretation-text").textContent = interp.text;
-const guidance = GUIDANCE[currentLang].find(
-  r => physicalPercent >= r.min && physicalPercent <= r.max
-);
 
-const listEl = document.getElementById("guidance-list");
-listEl.innerHTML = "";
+  const guidance = GUIDANCE[currentLang].find(
+    r => physicalPercent >= r.min && physicalPercent <= r.max
+  );
 
-guidance.bullets.forEach(bullet => {
-  const li = document.createElement("li");
-  li.textContent = bullet;
-  li.style.marginBottom = "8px";
-  listEl.appendChild(li);
+  const listEl = document.getElementById("guidance-list");
+  listEl.innerHTML = "";
+
+  guidance.bullets.forEach(bullet => {
+    const li = document.createElement("li");
+    li.textContent = bullet;
+    li.style.marginBottom = "8px";
+    listEl.appendChild(li);
   });
-  const { data, error } = await supabase
-  .from("results")
-  .insert([{
-    name: participantName,
-    email: capturedEmail,
-    physicalRaw,
-    emotionalRaw,
-    combined,
-    physicalPercent,
-    emotionalPercent
-  }]);
 
-if (error) {
-  console.error("SUPABASE INSERT ERROR:", error);
-  alert("Supabase error: " + error.message);
-} else {
-  console.log("Supabase insert success:", data);
-}
+  // ✅ Supabase insert (ONE TIME, correct place)
+  const { data, error } = await supabase
+    .from("results")
+    .insert([{
+      name: participantName,
+      email: capturedEmail,
+      physicalRaw,
+      emotionalRaw,
+      combined,
+      physicalPercent,
+      emotionalPercent
+    }]);
+
+  if (error) {
+    console.error("SUPABASE INSERT ERROR:", error);
+  } else {
+    console.log("Supabase insert success:", data);
+  }
+
   showScreen("result");
 }
-// ===== Populate PDF content =====
-document.getElementById("pdf-name").textContent =
-  `${participantName}'s Results`;
 
-document.getElementById("pdf-physical").textContent =
-  `Physical Suggestibility: ${physicalPercent}%`;
-
-document.getElementById("pdf-emotional").textContent =
-  `Emotional Suggestibility: ${emotionalPercent}%`;
-
-document.getElementById("pdf-title").textContent = interp.title;
-document.getElementById("pdf-text").textContent = interp.text;
-
-const pdfList = document.getElementById("pdf-guidance");
-pdfList.innerHTML = "";
-
-guidance.bullets.forEach(bullet => {
-  const li = document.createElement("li");
-  li.textContent = bullet;
-  li.style.marginBottom = "6px";
-  pdfList.appendChild(li);
-});
 // ===== SEND RESULTS EMAIL =====
 if (capturedEmail) {
   fetch("/api/send-email", {

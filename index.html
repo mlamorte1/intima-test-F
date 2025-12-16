@@ -568,14 +568,28 @@ supabase.from("results").insert([{
 }]);
 // ===== Send results email =====
 if (capturedEmail) {
-  fetch("/api/send-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: capturedEmail,
-      resultId: combined // simple identifier for now
-    })
+  console.log("ABOUT TO SEND EMAIL");
+console.log("Email:", capturedEmail);
+
+fetch("/api/send-email", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    email: capturedEmail,
+    resultId: combined
   })
+})
+.then(res => {
+  console.log("EMAIL RESPONSE STATUS:", res.status);
+  return res.json();
+})
+.then(data => {
+  console.log("EMAIL RESPONSE BODY:", data);
+})
+.catch(err => {
+  console.error("EMAIL FETCH ERROR:", err);
+});
+
   .then(res => res.json())
   .then(data => console.log("Email sent:", data))
   .catch(err => console.error("Email error:", err));

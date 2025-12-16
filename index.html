@@ -509,6 +509,27 @@ guidance.bullets.forEach(bullet => {
   li.style.marginBottom = "6px";
   pdfList.appendChild(li);
 });
+// ===== SEND RESULTS EMAIL =====
+if (capturedEmail) {
+  fetch("/api/send-email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: capturedEmail,
+      physicalPercent: physicalPercent,
+      emotionalPercent: emotionalPercent
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Email sent:", data);
+    })
+    .catch(err => {
+      console.error("Email error:", err);
+    });
+}
 
 supabase.from("results").insert([{
   name: participantName,

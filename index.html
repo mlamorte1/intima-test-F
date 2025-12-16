@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INTIMA – Suggestibility Test</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #1a1208, #050509);
+      color: #fef9c3;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .card {
+      max-width: 520px;
+      width: 100%;
+      padding: 28px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .btn {
+      background: linear-gradient(135deg, #facc15, #f59e0b);
+      border: none;
+      color: #050509;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .small { opacity: 0.8; font-size: 14px; }
+    .hidden { display: none; }
+
+.logo-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at top, #3a2a14, #0a0703);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+  box-shadow: 0 0 40px rgba(250, 204, 21, 0.25);
+  overflow: hidden;
+}
+
+.logo-circle img {
+  width: 70%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="card">
+  <div class="logo-circle">
+  <img src="./intima-logo.png" alt="INTIMA logo">
+</div>
+
+  <h1>INTIMA</h1>
+  <p class="small">Unlock your suggestibility style</p>
+
+  <div style="margin: 10px 0;">
+    <span id="lang-en" style="cursor:pointer; font-weight:bold;">EN</span> |
+    <span id="lang-es" style="cursor:pointer; cursor:pointer;">ES</span>
+  </div>
+<input
+  id="name-input"
+  placeholder="Your first name"
+  style="
+    width: 100%;
+    padding: 12px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(234,179,8,0.5);
+    background: transparent;
+    color: #fef9c3;
+    outline: none;
+    text-align: center;
+    margin-bottom: 12px;
+  "
+/>
+
+  <button class="btn" id="start-btn">Start Test</button>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="card hidden">
+  <div id="question-counter"></div>
+  <h2 id="question-text"></h2>
+  <button class="btn" id="yes-btn">Yes</button>
+  <button class="btn" id="no-btn">No</button>
+</div>
+
+<!-- EMAIL -->
+<div id="screen-email" class="card hidden">
+  <h2>Get Your Results</h2>
+  <input id="email-input" placeholder="Email (optional)" style="width:100%; padding:10px; border-radius:999px;" />
+  <button class="btn" id="email-continue-btn">View Results</button>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="card hidden">
+  <h2>Your Results</h2>
+  <p id="result-physical"></p>
+  <p id="result-emotional"></p>
+  <h3 id="interpretation-title"></h3>
+  <p id="interpretation-text"></p>
+<ul id="guidance-list" style="text-align:left; margin-top:16px;"></ul>
+
+  <button class="btn" id="download-pdf-btn">Download PDF</button>
+</div>
+<!-- PDF TEMPLATE (hidden) -->
+<div id="pdf-template" style="
+  display:none;
+  background:#ffffff;
+  color:#000000;
+  padding:40px;
+  width:600px;
+  font-family: Arial, sans-serif;
+">
+  <h1 style="text-align:center;">INTIMA by Flowgenics – Suggestibility Profile</h1>
+  <p id="pdf-name"></p>
+  <hr>
+
+  <p id="pdf-physical"></p>
+  <p id="pdf-emotional"></p>
+
+  <h3 id="pdf-title"></h3>
+  <p id="pdf-text"></p>
+
+  <ul id="pdf-guidance"></ul>
+</div>
+
+<script type="module">
+let currentLang = "en";
+
+const savedLang = localStorage.getItem("intima-lang");
+if (savedLang) {
+  currentLang = savedLang;
+}
+updateLangUI();
+
+
+/***** CONFIG *****/
+const SUPABASE_URL = "https://iftsefgvuzbcsucsqwxo.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmdHNlZmd2dXpiY3N1Y3Nxd3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1NjY1MzUsImV4cCI6MjA4MTE0MjUzNX0.1vEVdfMFe9I9DUfiml5zV6s0a2vIz8z5yXL2xSOanBE";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+
+/***** QUESTIONS (short placeholder – you already have full set) *****/
+const QUESTIONS = [
+  // Questionnaire #1 — Physical Suggestibility
+  { questionnaire:1, weight:10, textEn:"Have you ever walked in your sleep during your adult life?", textEs:"¿Alguna vez has caminado dormido durante tu vida adulta?" },
+  { questionnaire:1, weight:10, textEn:"As a teenager, did you feel comfortable expressing your feelings to one or both of your parents?", textEs:"Cuando eras adolescente, ¿te sentías cómodo expresando tus sentimientos a uno o ambos padres?" },
+  { questionnaire:1, weight:5, textEn:"Do you tend to look directly into a person’s eyes or move closer when discussing something interesting?", textEs:"¿Tiendes a mirar directamente a los ojos o acercarte más a una persona cuando hablas de algo interesante?" },
+  { questionnaire:1, weight:5, textEn:"Do you feel that most people are uncritical of your appearance when you first meet them?", textEs:"¿Sientes que la mayoría de las personas no juzgan tu apariencia cuando te conocen?" },
+  { questionnaire:1, weight:5, textEn:"In a group of people you’ve just met, would you feel comfortable initiating conversation?", textEs:"En un grupo de personas que acabas de conocer, ¿te sentirías cómodo iniciando una conversación?" },
+  { questionnaire:1, weight:5, textEn:"Do you feel comfortable showing physical affection in public with someone you are close to?", textEs:"¿Te sientes cómodo mostrando afecto físico en público con alguien cercano?" },
+  { questionnaire:1, weight:5, textEn:"When someone talks about feeling physically warm, do you also begin to feel warm?", textEs:"Cuando alguien habla de sentir calor físico, ¿empiezas tú también a sentir calor?" },
+  { questionnaire:1, weight:5, textEn:"Do you sometimes tune out while listening because you are eager to respond?", textEs:"¿A veces dejas de escuchar porque estás ansioso por responder?" },
+  { questionnaire:1, weight:5, textEn:"When expressing your ideas, do you find it important to explain all the details so others fully understand your point?", textEs:"Al expresar tus ideas, ¿consideras importante explicar todos los detalles para que los demás comprendan completamente tu punto?" },
+  { questionnaire:1, weight:5, textEn:"Do you learn better by seeing or reading than by hearing?", textEs:"¿Aprendes mejor viendo o leyendo que escuchando?" },
+  { questionnaire:1, weight:5, textEn:"In a lecture or class, do you feel comfortable asking questions publicly?", textEs:"En una clase o conferencia, ¿te sientes cómodo haciendo preguntas en público?" },
+  { questionnaire:1, weight:5, textEn:"Do you enjoy relating to children?", textEs:"¿Disfrutas relacionarte con niños?" },
+  { questionnaire:1, weight:5, textEn:"Do you feel at ease with your body movements in unfamiliar situations?", textEs:"¿Te sientes cómodo con los movimientos de tu cuerpo en situaciones desconocidas?" },
+  { questionnaire:1, weight:5, textEn:"Do you prefer reading fiction rather than non-fiction?", textEs:"¿Prefieres leer ficción en lugar de no ficción?" },
+  { questionnaire:1, weight:5, textEn:"If you imagine sucking on a sour lemon, does your mouth water?", textEs:"Si imaginas chupar un limón ácido, ¿se te hace agua la boca?" },
+  { questionnaire:1, weight:5, textEn:"Do you feel comfortable receiving compliments in front of others?", textEs:"¿Te sientes cómodo recibiendo cumplidos delante de otras personas?" },
+  { questionnaire:1, weight:5, textEn:"Do you consider yourself a good conversationalist?", textEs:"¿Te consideras un buen conversador?" },
+  { questionnaire:1, weight:5, textEn:"Do you feel comfortable when attention is drawn to your appearance?", textEs:"¿Te sientes cómodo cuando se llama la atención sobre tu apariencia?" },
+
+  // Questionnaire #2 — Emotional Suggestibility
+  { questionnaire:2, weight:10, textEn:"Have you ever awakened at night unable to move or speak?", textEs:"¿Alguna vez te has despertado por la noche sin poder moverte o hablar?" },
+  { questionnaire:2, weight:10, textEn:"As a child, were you more affected by tone of voice than words?", textEs:"Cuando eras niño, ¿te afectaba más el tono de voz que las palabras?" },
+  { questionnaire:2, weight:5, textEn:"If someone talks about a fear you’ve had, do you feel fearful too?", textEs:"Si alguien habla de un miedo que has tenido, ¿sientes miedo también?" },
+  { questionnaire:2, weight:5, textEn:"After an argument, do you dwell on what you should have said?", textEs:"Después de una discusión, ¿piensas en lo que deberías haber dicho?" },
+  { questionnaire:2, weight:5, textEn:"Do you sometimes tune out because your mind drifts?", textEs:"¿A veces dejas de escuchar porque tu mente divaga?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel embarrassed when complimented?", textEs:"¿Te sientes avergonzado cuando te hacen un cumplido?" },
+  { questionnaire:2, weight:5, textEn:"Do you fear not being able to carry on a conversation?", textEs:"¿Temes no poder mantener una conversación?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel self-conscious about your appearance?", textEs:"¿Te sientes cohibido respecto a tu apariencia?" },
+  { questionnaire:2, weight:5, textEn:"Would you rather avoid being around children?", textEs:"¿Preferirías evitar estar rodeado de niños?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel tense in unfamiliar social situations?", textEs:"¿Te sientes tenso en situaciones sociales desconocidas?" },
+  { questionnaire:2, weight:5, textEn:"Do you prefer non-fiction over fiction?", textEs:"¿Prefieres la no ficción a la ficción?" },
+  { questionnaire:2, weight:5, textEn:"Do you have difficulty experiencing described tastes?", textEs:"¿Te cuesta experimentar sabores descritos?" },
+  { questionnaire:2, weight:5, textEn:"Do you see yourself less favorably than others do?", textEs:"¿Te ves a ti mismo de forma menos favorable que los demás?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel awkward initiating physical affection in public?", textEs:"¿Te sientes incómodo iniciando afecto físico en público?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel uncomfortable asking questions in a group?", textEs:"¿Te sientes incómodo haciendo preguntas en grupo?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel uneasy with direct eye contact?", textEs:"¿Te sientes incómodo con el contacto visual directo?" },
+  { questionnaire:2, weight:5, textEn:"Do you feel uncomfortable initiating conversation in a group?", textEs:"¿Te sientes incómodo iniciando una conversación en grupo?" },
+  { questionnaire:2, weight:5, textEn:"Do you find it difficult to verbalize love?", textEs:"¿Te resulta difícil expresar verbalmente el amor?" }
+];
+
+// === OFFICIAL SCORING TABLE ===
+// X-axis: Combined score (50 → 200, step 5)
+// Y-axis: Physical raw score (0 → 100, step 5)
+// Cell value = % Physical Suggestibility
+
+const COMBINED_AXIS = [
+  50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185,190,195,200
+];
+
+const SCORING_TABLE = {
+  100:[null,null,null,null,null,null,null,null,null,null,100,95,91,87,83,80,77,74,71,69,67,65,63,61,59,57,56,54,53,51,50],
+   95:[null,null,null,null,null,null,null,null,null,100,95,90,86,83,79,76,73,70,68,66,63,61,59,58,56,54,53,51,50,49,48],
+   90:[null,null,null,null,null,null,null,null,100,95,90,86,82,78,75,72,69,67,64,62,60,58,56,55,53,51,50,49,47,46,46],
+   85:[null,null,null,null,null,null,null,100,94,89,85,81,77,74,71,68,65,63,61,59,57,55,53,52,50,49,47,46,45,44,43],
+   80:[null,null,null,null,null,null,100,94,89,84,80,76,73,70,67,64,62,59,57,55,53,52,50,48,47,46,44,43,42,41,40],
+   75:[null,null,null,null,null,100,94,88,83,79,75,71,68,65,63,60,58,56,54,52,50,49,47,45,44,43,42,41,39,38,38],
+   70:[null,null,null,null,100,93,88,82,78,74,70,67,64,61,58,56,54,52,50,48,47,45,44,43,42,41,39,38,37,36,35],
+   65:[null,null,null,100,93,87,81,76,72,68,65,62,59,57,54,52,50,48,46,45,43,42,41,39,38,37,36,35,34,33,33],
+   60:[null,null,100,92,86,80,75,71,67,63,60,57,55,52,50,48,46,44,43,41,40,39,38,36,35,34,33,32,32,31,30],
+   55:[null,100,92,85,79,73,69,65,61,58,55,52,50,48,46,44,42,41,39,38,37,35,34,33,32,31,31,30,29,28,28],
+   50:[100,91,83,77,71,67,63,59,56,53,50,48,45,43,42,40,38,37,36,34,33,32,31,30,29,29,28,27,26,26,25],
+   45:[90,82,75,69,64,60,56,53,50,47,45,43,41,39,38,36,35,33,32,31,30,29,28,27,26,26,25,24,24,23,23],
+   40:[80,73,67,62,57,53,50,47,44,42,40,38,36,35,33,32,31,30,29,28,27,26,25,24,24,23,22,22,21,21,20],
+   35:[70,64,58,54,50,47,44,41,39,37,35,33,32,30,29,28,27,26,25,24,23,23,22,21,21,20,19,19,18,18,18],
+   30:[60,55,50,46,43,40,38,35,33,32,30,29,27,26,25,24,23,22,21,21,20,19,19,18,18,17,17,16,16,15,15],
+   25:[50,45,42,38,36,33,31,29,28,26,25,24,23,22,21,20,19,19,18,17,17,16,16,15,15,14,14,14,13,13,13],
+   20:[40,36,33,31,29,27,25,24,22,21,20,19,18,17,17,16,15,15,14,14,13,13,13,12,12,11,11,11,11,10,10],
+   15:[30,27,25,23,21,20,19,18,17,16,15,14,14,13,13,12,12,11,11,10,10,10,9,9,9,9,8,8,8,8,8],
+   10:[20,18,17,15,14,13,13,12,11,11,10,0,9,9,8,8,8,7,7,7,7,6,6,6,6,6,6,5,5,5,5],
+    5:[10,9,8,8,7,7,6,6,6,5,5,5,5,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3],
+    0:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+};
+function snap5(n) {
+  return Math.round(n / 5) * 5;
+}
+
+function lookupPhysicalPercent(physicalRaw, combined) {
+  let pr = snap5(physicalRaw);
+  let cs = snap5(combined);
+
+  pr = Math.max(0, Math.min(100, pr));
+  cs = Math.max(50, Math.min(200, cs));
+  if (cs < pr) cs = pr;
+
+  const row = SCORING_TABLE[pr];
+  const idx = COMBINED_AXIS.indexOf(cs);
+  if (!row || idx === -1) return 0;
+
+  return row[idx];
+}
+
+/***** INTERPRETATIONS *****/
+const INTERPRETATIONS = {
+  en: [
+    {
+      min: 0, max: 24,
+      title: "Very Low Physical Suggestibility",
+      text: "Your results suggest a strong emotional responsiveness. You tend to experience the world primarily through feelings, inner states, and emotional meaning rather than physical sensation."
+    },
+    {
+      min: 25, max: 39,
+      title: "Low Physical Suggestibility",
+      text: "You show a tendency toward emotional awareness with a moderate physical response. Reflection and emotional meaning are especially important for you."
+    },
+    {
+      min: 40, max: 59,
+      title: "Balanced Suggestibility",
+      text: "Your profile suggests a balanced blend of physical and emotional responsiveness. You can adapt fluidly to different situations."
+    },
+    {
+      min: 60, max: 74,
+      title: "High Physical Suggestibility",
+      text: "Your results indicate a strong physical responsiveness. Sensory and embodied experiences play an important role for you."
+    },
+    {
+      min: 75, max: 100,
+      title: "Very High Physical Suggestibility",
+      text: "You show a very strong physical suggestibility. Physical sensation, imagery, and embodiment are central to how you process experience."
+    }
+  ],
+  es: [
+    {
+      min: 0, max: 24,
+      title: "Sugestionabilidad Física Muy Baja",
+      text: "Tus resultados indican una fuerte sensibilidad emocional. Tiendes a experimentar el mundo principalmente a través de las emociones."
+    },
+    {
+      min: 25, max: 39,
+      title: "Sugestionabilidad Física Baja",
+      text: "Muestras una mayor orientación emocional con una respuesta física moderada."
+    },
+    {
+      min: 40, max: 59,
+      title: "Sugestionabilidad Equilibrada",
+      text: "Tu perfil sugiere un equilibrio entre la sensibilidad física y emocional."
+    },
+    {
+      min: 60, max: 74,
+      title: "Sugestionabilidad Física Alta",
+      text: "Tus resultados indican una fuerte sensibilidad física y corporal."
+    },
+    {
+      min: 75, max: 100,
+      title: "Sugestionabilidad Física Muy Alta",
+      text: "Presentas una sugestionabilidad física muy elevada. El cuerpo y las sensaciones son centrales para ti."
+    }
+  ]
+};
+const GUIDANCE = {
+  en: [
+    {
+      min: 0, max: 24,
+      bullets: [
+        "You may process experiences primarily through emotions and inner reflection.",
+        "Tone, mood, and emotional safety are especially important for you.",
+        "You may benefit from environments that allow emotional expression.",
+        "Others may experience you as thoughtful and perceptive."
+      ]
+    },
+    {
+      min: 25, max: 39,
+      bullets: [
+        "You tend to notice emotional nuances quickly.",
+        "Calm, supportive communication works best for you.",
+        "Meaning and reflection guide your decisions.",
+        "You may value emotional connection over stimulation."
+      ]
+    },
+    {
+      min: 40, max: 59,
+      bullets: [
+        "You are flexible in how you respond to experiences.",
+        "You adapt well to different people and environments.",
+        "This balance supports resilience and communication.",
+        "You can engage both emotionally and physically."
+      ]
+    },
+    {
+      min: 60, max: 74,
+      bullets: [
+        "You respond strongly to physical and sensory cues.",
+        "Experiences are often processed through the body first.",
+        "Movement and action help integrate emotions.",
+        "Others may see you as grounded and present."
+      ]
+    },
+    {
+      min: 75, max: 100,
+      bullets: [
+        "You are highly responsive to sensory experiences.",
+        "Embodiment and environment strongly influence you.",
+        "Hands-on learning suits you well.",
+        "Your body often leads emotional processing."
+      ]
+    }
+  ],
+  es: [
+    {
+      min: 0, max: 24,
+      bullets: [
+        "Procesas las experiencias principalmente a través de las emociones.",
+        "El tono y la seguridad emocional son muy importantes para ti.",
+        "Te benefician entornos con profundidad emocional.",
+        "Los demás pueden percibirte como sensible y perceptivo."
+      ]
+    },
+    {
+      min: 25, max: 39,
+      bullets: [
+        "Notas rápidamente los matices emocionales.",
+        "Respondes mejor a una comunicación calmada.",
+        "El significado guía tus decisiones.",
+        "Valoras la conexión emocional."
+      ]
+    },
+    {
+      min: 40, max: 59,
+      bullets: [
+        "Eres flexible en tus respuestas.",
+        "Te adaptas bien a diferentes entornos.",
+        "Este equilibrio favorece la resiliencia.",
+        "Puedes involucrarte emocional y físicamente."
+      ]
+    },
+    {
+      min: 60, max: 74,
+      bullets: [
+        "Respondes con fuerza a señales físicas.",
+        "Las emociones se procesan a través del cuerpo.",
+        "El movimiento ayuda a integrar emociones.",
+        "Se te percibe como presente y conectado."
+      ]
+    },
+    {
+      min: 75, max: 100,
+      bullets: [
+        "Eres muy sensible a experiencias físicas.",
+        "El cuerpo y el entorno influyen mucho en ti.",
+        "Aprendes mejor de forma experiencial.",
+        "El cuerpo guía tu procesamiento emocional."
+      ]
+    }
+  ]
+};
+
+
+/***** STATE *****/
+let index = 0;
+let scoreQ1 = 0;
+let scoreQ2 = 0;
+let capturedEmail = null;
+let participantName = null;
+
+/***** ELEMENTS *****/
+const screens = {
+  home: document.getElementById("screen-home"),
+  quiz: document.getElementById("screen-quiz"),
+  email: document.getElementById("screen-email"),
+  result: document.getElementById("screen-result")
+};
+
+const questionText = document.getElementById("question-text");
+const counter = document.getElementById("question-counter");
+
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.add("hidden"));
+  screens[name].classList.remove("hidden");
+}
+
+function showQuestion() {
+  const q = QUESTIONS[index];
+  counter.textContent = `Question ${index+1} of ${QUESTIONS.length}`;
+  questionText.textContent = currentLang === "es" ? q.textEs : q.textEn;
+}
+
+function answer(yes) {
+  const q = QUESTIONS[index];
+  if (yes) {
+    if (q.questionnaire === 1) scoreQ1 += q.weight;
+    else scoreQ2 += q.weight;
+  }
+  index++;
+  if (index < QUESTIONS.length) showQuestion();
+  else showScreen("email");
+}
+
+function finishQuiz() {
+document.querySelector("#screen-result h2").textContent =
+  `${participantName}, here are your results`;
+
+const physicalRaw = scoreQ1;
+const emotionalRaw = scoreQ2;
+const combined = physicalRaw + emotionalRaw;
+
+const physicalPercent = lookupPhysicalPercent(physicalRaw, combined);
+const emotionalPercent = 100 - physicalPercent;
+
+
+  document.getElementById("result-physical").textContent = `Physical: ${physicalPercent}%`;
+  document.getElementById("result-emotional").textContent = `Emotional: ${emotionalPercent}%`;
+
+const interp = INTERPRETATIONS[currentLang].find(
+  r => physicalPercent >= r.min && physicalPercent <= r.max
+);
+
+  document.getElementById("interpretation-title").textContent = interp.title;
+  document.getElementById("interpretation-text").textContent = interp.text;
+const guidance = GUIDANCE[currentLang].find(
+  r => physicalPercent >= r.min && physicalPercent <= r.max
+);
+
+const listEl = document.getElementById("guidance-list");
+listEl.innerHTML = "";
+
+guidance.bullets.forEach(bullet => {
+  const li = document.createElement("li");
+  li.textContent = bullet;
+  li.style.marginBottom = "8px";
+  listEl.appendChild(li);
+});
+// ===== Populate PDF content =====
+document.getElementById("pdf-name").textContent =
+  `${participantName}'s Results`;
+
+document.getElementById("pdf-physical").textContent =
+  `Physical Suggestibility: ${physicalPercent}%`;
+
+document.getElementById("pdf-emotional").textContent =
+  `Emotional Suggestibility: ${emotionalPercent}%`;
+
+document.getElementById("pdf-title").textContent = interp.title;
+document.getElementById("pdf-text").textContent = interp.text;
+
+const pdfList = document.getElementById("pdf-guidance");
+pdfList.innerHTML = "";
+
+guidance.bullets.forEach(bullet => {
+  const li = document.createElement("li");
+  li.textContent = bullet;
+  li.style.marginBottom = "6px";
+  pdfList.appendChild(li);
+});
+// ===== SEND RESULTS EMAIL =====
+if (capturedEmail) {
+  fetch("/api/send-email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: capturedEmail,
+      physicalPercent: physicalPercent,
+      emotionalPercent: emotionalPercent
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Email sent:", data);
+    })
+    .catch(err => {
+      console.error("Email error:", err);
+    });
+}
+
+supabase.from("results").insert([{
+  name: participantName,
+  email: capturedEmail,
+  physicalRaw,
+  emotionalRaw,
+  combined,
+  physicalPercent,
+  emotionalPercent
+}]);
+
+
+  showScreen("result");
+}
+function updateLangUI() {
+  document.getElementById("lang-en").style.opacity =
+    currentLang === "en" ? "1" : "0.5";
+
+  document.getElementById("lang-es").style.opacity =
+    currentLang === "es" ? "1" : "0.5";
+}
+
+/***** EVENTS *****/
+document.getElementById("start-btn").onclick = () => {
+  const nameValue = document.getElementById("name-input").value.trim();
+
+  if (!nameValue) {
+    alert("Please enter your name to begin.");
+    return;
+  }
+
+  participantName = nameValue;
+  index = 0;
+  showScreen("quiz");
+  showQuestion();
+};
+
+document.getElementById("yes-btn").onclick = () => answer(true);
+document.getElementById("no-btn").onclick = () => answer(false);
+document.getElementById("email-continue-btn").onclick = () => { capturedEmail = document.getElementById("email-input").value || null; finishQuiz(); };
+
+document.getElementById("download-pdf-btn").onclick = () => {
+  const pdfEl = document.getElementById("pdf-template");
+
+  // Temporarily show PDF template
+  pdfEl.style.display = "block";
+
+  html2pdf({
+    margin: 10,
+    filename: "INTIMA_Result.pdf",
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+  })
+    .from(pdfEl)
+    .save()
+    .then(() => {
+      // Hide it again after export
+      pdfEl.style.display = "none";
+    });
+};
+
+
+document.getElementById("lang-en").onclick = () => {
+  currentLang = "en";
+  localStorage.setItem("intima-lang", "en");
+  updateLangUI();
+};
+
+document.getElementById("lang-es").onclick = () => {
+  currentLang = "es";
+  localStorage.setItem("intima-lang", "es");
+  updateLangUI();
+};
+
+
+
+</script>
+</body>
+</html>

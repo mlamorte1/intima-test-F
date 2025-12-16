@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "INTIMA <results@flowgenicscoaching.com>",
+        from: "INTIMA <results@updates.flowgenicscoaching.com>",
         to: email,
         subject: "Your INTIMA results are ready",
         html: `
@@ -42,4 +42,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Failed to send email" });
   }
 }
+
 

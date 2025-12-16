@@ -72,14 +72,10 @@
 <body>
 
 <!-- HOME -->
-<div id="screen-home" class="card">
-  <div class="logo-circle">
+<div class="logo-circle">
   <img src="./intima-logo.png" alt="INTIMA logo" />
-
-  alt=""
-/>
-
 </div>
+
 
   <h1>INTIMA</h1>
   <p class="small">Unlock your suggestibility style</p>
@@ -590,11 +586,6 @@ fetch("/api/send-email", {
   console.error("EMAIL FETCH ERROR:", err);
 });
 
-  .then(res => res.json())
-  .then(data => console.log("Email sent:", data))
-  .catch(err => console.error("Email error:", err));
-}
-
 
   showScreen("result");
 }
@@ -659,6 +650,7 @@ document.getElementById("lang-es").onclick = () => {
 };
 
 
+updateLangUI();
 
 </script>
 </body>

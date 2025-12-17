@@ -517,17 +517,20 @@ if (capturedEmail) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
+      name: participantName,
       email: capturedEmail,
       physicalPercent: physicalPercent,
-      emotionalPercent: emotionalPercent
+      emotionalPercent: emotionalPercent,
+      resultTitle: interp.title,
+      resultText: interp.text
     })
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Email sent:", data);
+      console.log("✅ Email sent:", data);
     })
     .catch(err => {
-      console.error("Email error:", err);
+      console.error("❌ Email error:", err);
     });
 }
 
@@ -632,4 +635,5 @@ document.getElementById("lang-es").onclick = () => {
 </body>
 
 </html>
+
 

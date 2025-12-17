@@ -27,32 +27,90 @@ export default async function handler(req, res) {
       to: email,
       subject: `Your INTIMA Results – ${resultTitle}`,
       html: `
-        <div style="background:#0f0f0f; color:#fef9c3; font-family:sans-serif; padding:24px;">
-          <img src="https://intima-test-f.vercel.app/intima-logo.png" alt="INTIMA Logo" style="width:100px; margin-bottom: 12px;" />
-          <h2 style="color: #fef9c3;">Hi ${name},</h2>
-          <p>Thanks for taking the INTIMA Suggestibility Test. Here's a snapshot of your results:</p>
-          <p><strong>🧠 Physical Suggestibility:</strong> ${physicalPercent}%<br/>
-          <strong>💞 Emotional Suggestibility:</strong> ${emotionalPercent}%</p>
-          <h3 style="margin-top: 20px; color: #facc15;">${resultTitle}</h3>
-          <p>${resultText}</p>
-          <p style="margin-top: 24px;">Want to learn more about how to use your suggestibility profile for growth?</p>
-          <a href="https://flowgenicscoaching.com" style="display:inline-block; background:#facc15; color:#000000; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight: bold; margin-top:12px;">
-            Book Your Free Session →
-          </a>
-          <p style="margin-top: 32px; font-size: 13px; color: #888888;">
-            You received this email because you took the INTIMA test.<br/>
-            <a href="https://flowgenicscoaching.com" style="color:#facc15;">flowgenicscoaching.com</a>
-          </p>
-        </div>
-      `,
-    });
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>INTIMA Results</title>
+</head>
+<body style="margin:0;padding:0;background:#0b0b0b;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0b0b;padding:24px;">
+    <tr>
+      <td align="center">
 
-    res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("❌ Resend error:", error);
-    res.status(500).json({ error: "Email failed to send" });
-  }
-}
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:radial-gradient(circle at top,#1a1208,#050509);border-radius:16px;padding:32px;color:#fef9c3;font-family:Georgia, serif;">
+
+          <!-- Header -->
+          <tr>
+            <td style="text-align:center;padding-bottom:24px;">
+              <h1 style="font-weight:400;letter-spacing:0.5px;color:#facc15;">
+                Hi ${name}, your INTIMA results are ready ✨
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Intro -->
+          <tr>
+            <td style="font-size:16px;line-height:1.6;padding-bottom:24px;">
+              Thank you for taking the <strong>INTIMA Suggestibility Test</strong>.
+              Based on your responses, here’s a snapshot of your suggestibility profile:
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background:rgba(255,255,255,0.04);border-radius:14px;padding:24px;text-align:center;">
+              <img src="https://intima-test-f.vercel.app/intima-logo.png" width="90" alt="INTIMA" style="margin-bottom:16px;" />
+              <h2 style="color:#facc15;margin:12px 0;">${resultTitle}</h2>
+              <p style="font-size:15px;line-height:1.6;">
+                ${resultText}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Meaning -->
+          <tr>
+            <td style="padding-top:28px;font-size:15px;line-height:1.6;">
+              <strong>What does this mean?</strong><br><br>
+              This insight gives you a powerful starting point for personal growth,
+              decision-making, and deeper self-awareness.
+              Understanding your suggestibility style can improve how you learn,
+              connect, and thrive.
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td align="center" style="padding-top:32px;">
+              <a href="https://www.flowgenicscoaching.com"
+                 style="display:inline-block;padding:14px 28px;
+                 background:linear-gradient(135deg,#facc15,#f59e0b);
+                 color:#050509;text-decoration:none;
+                 font-weight:bold;border-radius:999px;">
+                Book Your Free Session →
+              </a>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding-top:32px;font-size:12px;color:#bfae7a;text-align:center;">
+              You received this email because you took the free INTIMA Suggestibility Test.<br>
+              <a href="https://www.flowgenicscoaching.com" style="color:#facc15;text-decoration:none;">
+                www.flowgenicscoaching.com
+              </a>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`
+
 
 
 

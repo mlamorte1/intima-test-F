@@ -9,19 +9,22 @@ module.exports = async function handler(req, res) {
   }
 
   const {
-    name,
-    email,
-    physicalPercent,
-    emotionalPercent,
-    resultTitle,
-    resultText
-  } = req.body;
+  name,
+  email,
+  physicalPercent,
+  emotionalPercent,
+  resultTitle,
+  resultText,
+  subscribed
+} = req.body;
+
 
   if (!email || !name) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
+    console.log("📩 Newsletter opt-in:", subscribed);
     await resend.emails.send({
       from: "INTIMA Test <results@flowgenicscoaching.com>",
       to: email,
@@ -145,6 +148,7 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
 };
 
   
+
 
 
 

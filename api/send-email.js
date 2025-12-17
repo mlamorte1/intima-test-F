@@ -55,6 +55,13 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
         <table width="100%" cellpadding="0" cellspacing="0"
           style="max-width:600px;background:radial-gradient(circle at top,#1a1208,#050509);
           border-radius:16px;padding:32px;color:#fef9c3;font-family:Georgia, serif;">
+<tr>
+  <td align="center" style="padding-bottom: 16px;">
+    <img src="https://intima-test-f.vercel.app/flowgenics-logo.png"
+         width="120" alt="Flowgenics Logo"
+         style="max-width: 100%; height: auto;" />
+  </td>
+</tr>
 
           <tr>
             <td style="text-align:center;padding-bottom:24px;">
@@ -138,6 +145,7 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
 };
 
   
+
 
 
 

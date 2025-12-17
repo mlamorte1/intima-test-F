@@ -61,7 +61,7 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
 <tr>
   <td align="center" style="padding-bottom: 16px;">
     <img src="https://intima-test-f.vercel.app/flowgenics-logo.png"
-         width="120" alt="Flowgenics Logo"
+         width="180" alt="Flowgenics Logo"
          style="max-width: 100%; height: auto;" />
   </td>
 </tr>
@@ -148,6 +148,7 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
 };
 
   
+
 
 
 

@@ -93,15 +93,23 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
 
           <tr>
             <td align="center" style="padding-top:32px;">
-              <a href="https://www.flowgenicscoaching.com"
-                 style="display:inline-block;padding:14px 28px;
-                 background:linear-gradient(135deg,#facc15,#f59e0b);
-                 color:#050509;text-decoration:none;
-                 font-weight:bold;border-radius:999px;">
-                Book Your Free Session →
-              </a>
-            </td>
-          </tr>
+              <tr>
+  <td align="center" style="padding-top:32px;">
+    <table cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center" bgcolor="#facc15" style="border-radius: 999px;">
+          <a href="https://www.flowgenicscoaching.com"
+             target="_blank"
+             style="font-size:16px; font-family: sans-serif; font-weight: bold; text-decoration: none;
+                    color: #050509; background-color: #facc15; padding: 14px 28px; display: inline-block; border-radius: 999px;">
+            Book Your Free Session →
+          </a>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
 
           <tr>
             <td style="padding-top:32px;font-size:12px;color:#bfae7a;text-align:center;">
@@ -130,6 +138,7 @@ Visit https://www.flowgenicscoaching.com to book your free session.`,
 };
 
   
+
 
 
 

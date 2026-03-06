@@ -131,6 +131,11 @@
 <ul id="guidance-list" style="text-align:left; margin-top:16px;"></ul>
 
   <button class="btn" id="download-pdf-btn">Download PDF</button>
+  <div id="back-to-michelangelo" style="display:none; margin-top:16px;">
+    <button class="btn" onclick="window.location.href='https://michelangelo-ai.vercel.app/assessments'">
+      ← Back to Michelangelo AI
+    </button>
+  </div>
 </div>
 <!-- PDF TEMPLATE (hidden) -->
 <div id="pdf-template" style="
@@ -563,6 +568,32 @@ if (capturedEmail) {
   }
 
   showScreen("result");
+  // ── Send results to Michelangelo AI ──
+  const urlParams = new URLSearchParams(window.location.search);
+  const michelangeloClientId = urlParams.get("client_id");
+
+  if (michelangeloClientId) {
+    try {
+      await fetch("https://michelangelo-ai.vercel.app/api/assessments/save-results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: michelangeloClientId,
+          assessment_type: "suggestibility",
+          secret: "flowgenics-mich-2025-xK9p",
+          results: {
+            dominant: physicalPercent >= 50 ? "Physical" : "Emotional",
+            physical_percent: physicalPercent,
+            emotional_percent: emotionalPercent,
+            completed_at: new Date().toISOString()
+          }
+        })
+      });
+    } catch(e) {
+      console.log("Michelangelo sync skipped", e);
+    }
+    document.getElementById("back-to-michelangelo").style.display = "block";
+  }
 })();
 
 
@@ -647,6 +678,7 @@ document.getElementById("lang-es").onclick = () => {
 </body>
 
 </html>
+
 
 
 

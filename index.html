@@ -5,185 +5,332 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>INTIMA – Suggestibility Test</title>
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- PDF export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at top, #1a1208, #050509);
-      color: #fef9c3;
+      font-family: 'Raleway', system-ui, sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 20px;
+      background-color: #1a0f00;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(200,164,21,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(120,80,10,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(15,8,0,0.9) 0%, transparent 100%);
+      color: #f0dfa0;
     }
     .card {
-      max-width: 520px;
+      max-width: 540px;
       width: 100%;
-      padding: 28px;
+      padding: 36px 32px;
       border-radius: 24px;
-      background: rgba(255, 255, 255, 0.04);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      background: rgba(253,250,244,0.05);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(200,164,21,0.1);
+      border: 1px solid rgba(200,164,21,0.15);
       text-align: center;
+      backdrop-filter: blur(12px);
     }
-    .btn {
-      background: linear-gradient(135deg, #facc15, #f59e0b);
-      border: none;
-      color: #050509;
-      padding: 12px 22px;
-      border-radius: 999px;
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: #c8a415;
+      margin: 8px 0 4px;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: #f0dfa0;
+      margin-bottom: 20px;
+      letter-spacing: 0.03em;
+      line-height: 1.5;
+    }
+    h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
       font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
+      color: #c8a415;
+      margin: 16px 0 8px;
     }
-    .small { opacity: 0.8; font-size: 14px; }
+    p { font-size: 0.88rem; color: rgba(240,223,160,0.75); line-height: 1.7; }
+    li { font-size: 0.88rem; color: rgba(240,223,160,0.7); line-height: 1.7; margin-bottom: 6px; }
+    .subtitle {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(200,164,21,0.5);
+      margin-bottom: 20px;
+    }
+    .logo-wrap {
+      width: 130px; height: 130px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #2a1c06, #050304);
+      box-shadow: 0 0 40px rgba(200,164,21,0.2);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      border: 1px solid rgba(200,164,21,0.2);
+    }
+    .logo-wrap img { width: 85%; height: auto; object-fit: contain; }
+    .logo-small { width: 70px; height: 70px; margin-bottom: 12px; }
+    .lang-toggle {
+      display: inline-flex; gap: 4px;
+      background: rgba(26,10,0,0.6);
+      border: 1px solid rgba(200,164,21,0.2);
+      border-radius: 999px; padding: 4px;
+      margin-bottom: 20px;
+    }
+    .lang-toggle span {
+      padding: 4px 14px; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+      cursor: pointer; transition: all 0.2s;
+      color: rgba(200,164,21,0.4);
+    }
+    .lang-toggle span.active { background: #c8a415; color: #1a0800; }
+    input[type="text"], input[type="email"] {
+      width: 100%; padding: 13px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(200,164,21,0.3);
+      background: rgba(26,10,0,0.6);
+      color: #f0dfa0; outline: none; text-align: center;
+      margin-bottom: 14px;
+      font-family: 'Raleway', sans-serif; font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, input[type="email"]:focus { border-color: rgba(200,164,21,0.6); }
+    input::placeholder { color: rgba(200,164,21,0.3); }
+    .checkbox-wrap {
+      display: flex; align-items: flex-start; gap: 10px;
+      text-align: left; margin: 12px 0 16px;
+    }
+    .checkbox-wrap input[type="checkbox"] {
+      width: auto; margin: 0; padding: 0;
+      accent-color: #c8a415; flex-shrink: 0; margin-top: 3px;
+    }
+    .checkbox-wrap span { font-size: 0.78rem; color: rgba(240,223,160,0.5); line-height: 1.5; }
+    .btn {
+      background: linear-gradient(135deg, #c8a415, #8a6f0a);
+      border: none; color: #1a0800;
+      padding: 13px 28px; border-radius: 999px;
+      font-weight: 600; font-family: 'Raleway', sans-serif;
+      font-size: 0.85rem; letter-spacing: 0.08em;
+      cursor: pointer; margin-top: 10px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(200,164,21,0.3);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,164,21,0.4); }
+    .btn:active { transform: translateY(0); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(200,164,21,0.4);
+      color: #c8a415; box-shadow: none;
+    }
+    .btn-secondary:hover { background: rgba(200,164,21,0.08); }
+    .btn-answer { display: inline-block; min-width: 100px; margin: 8px 6px 0; }
+    .progress-wrap {
+      width: 100%; height: 4px;
+      background: rgba(200,164,21,0.1);
+      border-radius: 999px; margin-bottom: 24px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #c8a415, #f0c040);
+      border-radius: 999px; transition: width 0.4s ease;
+    }
+    .counter {
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      color: rgba(200,164,21,0.4); text-transform: uppercase; margin-bottom: 16px;
+    }
+    .result-score {
+      display: flex; gap: 12px; justify-content: center; margin: 16px 0;
+    }
+    .score-pill {
+      padding: 8px 20px; border-radius: 999px;
+      font-size: 0.85rem; font-weight: 600;
+      border: 1px solid rgba(200,164,21,0.3);
+      background: rgba(200,164,21,0.08); color: #c8a415;
+    }
+    ul { text-align: left; padding-left: 20px; margin: 12px 0; }
+    .divider { width: 60px; height: 1px; background: rgba(200,164,21,0.3); margin: 20px auto; }
     .hidden { display: none; }
-
-.logo-circle {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: radial-gradient(circle at top, #3a2a14, #0a0703);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px auto;
-  box-shadow: 0 0 40px rgba(250, 204, 21, 0.25);
-  overflow: hidden;
-}
-
-.logo-circle img {
-  width: 70%;
-  height: auto;
-  display: block;
-  object-fit: contain;
-}
-</style>
+    #pdf-template {
+      display: none; background: #ffffff; color: #000000;
+      padding: 40px; width: 600px; font-family: Arial, sans-serif;
+    }
+  </style>
 </head>
 <body>
 
 <!-- HOME -->
 <div id="screen-home" class="card">
-  <div class="logo-circle">
-  <img src="./intima-logo.png" alt="INTIMA logo">
-</div>
-
-  <h1>INTIMA</h1>
-  <p class="small">Unlock your suggestibility style</p>
-
-  <div style="margin: 10px 0;">
-    <span id="lang-en" style="cursor:pointer; font-weight:bold;">EN</span> |
-    <span id="lang-es" style="cursor:pointer; cursor:pointer;">ES</span>
+  <div class="logo-wrap">
+    <img src="./intima-logo.png" alt="INTIMA logo">
   </div>
-<input
-  id="name-input"
-  placeholder="Your first name"
-  style="
-    width: 100%;
-    padding: 12px 7px;
-    border-radius: 999px;
-    border: 1px solid rgba(234,179,8,0.5);
-    background: transparent;
-    color: #fef9c3;
-    outline: none;
-    text-align: center;
-    margin-bottom: 12px;
-  "
-/>
-
+  <h1>INTIMA</h1>
+  <p class="subtitle" id="home-subtitle">Unlock your suggestibility</p>
+  <div class="lang-toggle">
+    <span id="lang-en" class="active" onclick="setLang('en')">EN</span>
+    <span id="lang-es" onclick="setLang('es')">ES</span>
+  </div>
+  <input type="text" id="name-input" placeholder="Your first name" />
   <button class="btn" id="start-btn">Start Test</button>
 </div>
 
 <!-- QUIZ -->
 <div id="screen-quiz" class="card hidden">
-  <div id="question-counter"></div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="counter" id="question-counter"></div>
   <h2 id="question-text"></h2>
-  <button class="btn" id="yes-btn">Yes</button>
-  <button class="btn" id="no-btn">No</button>
+  <div>
+    <button class="btn btn-answer" id="yes-btn">Yes</button>
+    <button class="btn btn-answer" id="no-btn">No</button>
+  </div>
 </div>
 
 <!-- EMAIL -->
 <div id="screen-email" class="card hidden">
-  <h2>Enter your email to view your results</h2>
-  <input id="email-input" placeholder="Email" style="width:100%; padding:10px; border-radius:999px;" />
-  <label style="display: flex; align-items: center; margin: 12px 0;">
-  <input type="checkbox" id="subscribed-checkbox" style="margin-right: 8px;" />
-  <span style="font-size: 14px;">
-    I’d like to receive Flowgenics updates and resources
-  </span>
-</label>
-
+  <h2 id="email-title">Enter your email to view your results</h2>
+  <input type="email" id="email-input" placeholder="Email" />
+  <div class="checkbox-wrap">
+    <input type="checkbox" id="subscribed-checkbox" />
+    <span id="email-subscribe-label">I'd like to receive Flowgenics updates and resources</span>
+  </div>
   <button class="btn" id="email-continue-btn">View Results</button>
 </div>
 
 <!-- RESULT -->
 <div id="screen-result" class="card hidden">
-  <h2>Your Results</h2>
-  <p id="result-physical"></p>
-  <p id="result-emotional"></p>
+  <div class="logo-wrap logo-small">
+    <img src="./intima-logo.png" alt="INTIMA">
+  </div>
+  <h2 id="result-name-title"></h2>
+  <div class="result-score">
+    <div class="score-pill" id="result-physical"></div>
+    <div class="score-pill" id="result-emotional"></div>
+  </div>
+  <div class="divider"></div>
   <h3 id="interpretation-title"></h3>
   <p id="interpretation-text"></p>
-<ul id="guidance-list" style="text-align:left; margin-top:16px;"></ul>
-
-  <button class="btn" id="download-pdf-btn">Download PDF</button>
-  <div id="back-to-michelangelo" style="display:none; margin-top:16px;">
-    <button class="btn" onclick="window.location.href='https://michelangelo-ai.vercel.app/chat'">
+  <ul id="guidance-list"></ul>
+  <div class="divider"></div>
+  <button class="btn" id="download-pdf-btn">⬇ Download PDF</button>
+  <div id="back-to-michelangelo" style="display:none; margin-top:12px;">
+    <button class="btn btn-secondary" onclick="window.location.href='https://michelangelo-ai.vercel.app/chat'">
       ← Back to Michelangelo AI
     </button>
   </div>
 </div>
-<!-- PDF TEMPLATE (hidden) -->
-<div id="pdf-template" style="
-  display:none;
-  background:#ffffff;
-  color:#000000;
-  padding:40px;
-  width:600px;
-  font-family: Arial, sans-serif;
-">
-  <h1 style="text-align:center;">INTIMA by Flowgenics – Suggestibility Profile</h1>
-  <p id="pdf-name"></p>
-  <hr>
 
+<!-- PDF TEMPLATE -->
+<div id="pdf-template">
+  <h1 style="text-align:center;">INTIMA by Flowgenics – Suggestibility Profile</h1>
+  <p id="pdf-name"></p><hr>
   <p id="pdf-physical"></p>
   <p id="pdf-emotional"></p>
-
   <h3 id="pdf-title"></h3>
   <p id="pdf-text"></p>
-
   <ul id="pdf-guidance"></ul>
 </div>
 
 <script type="module">
-let currentLang = "en";
+// ─── TRANSLATIONS ─────────────────────────────────────────────────────────────
+const UI = {
+  en: {
+    homeSubtitle: "Unlock your suggestibility",
+    namePlaceholder: "Your first name",
+    startBtn: "Start Test",
+    yesBtn: "Yes", noBtn: "No",
+    questionOf: (i, t) => `Question ${i} of ${t}`,
+    emailTitle: "Enter your email to view your results",
+    emailPlaceholder: "Email",
+    emailSubscribe: "I'd like to receive Flowgenics updates and resources",
+    emailBtn: "View Results",
+    emailAlert: "Please enter your email to view your results.",
+    nameAlert: "Please enter your name to begin.",
+    physical: n => `Physical: ${n}%`,
+    emotional: n => `Emotional: ${n}%`,
+    downloadBtn: "⬇ Download PDF",
+    backBtn: "← Back to Michelangelo AI",
+    resultTitle: name => `${name}, here are your results`,
+    pdfPhysical: n => `Physical Suggestibility: ${n}%`,
+    pdfEmotional: n => `Emotional Suggestibility: ${n}%`,
+  },
+  es: {
+    homeSubtitle: "Descubre tu sugestionabilidad",
+    namePlaceholder: "Tu nombre",
+    startBtn: "Comenzar Test",
+    yesBtn: "Sí", noBtn: "No",
+    questionOf: (i, t) => `Pregunta ${i} de ${t}`,
+    emailTitle: "Ingresa tu correo para ver tus resultados",
+    emailPlaceholder: "Correo electrónico",
+    emailSubscribe: "Me gustaría recibir actualizaciones y recursos de Flowgenics",
+    emailBtn: "Ver Resultados",
+    emailAlert: "Por favor ingresa tu correo para ver tus resultados.",
+    nameAlert: "Por favor ingresa tu nombre para comenzar.",
+    physical: n => `Físico: ${n}%`,
+    emotional: n => `Emocional: ${n}%`,
+    downloadBtn: "⬇ Descargar PDF",
+    backBtn: "← Volver a Michelangelo AI",
+    resultTitle: name => `${name}, aquí están tus resultados`,
+    pdfPhysical: n => `Sugestionabilidad Física: ${n}%`,
+    pdfEmotional: n => `Sugestionabilidad Emocional: ${n}%`,
+  }
+};
 
-const savedLang = localStorage.getItem("intima-lang");
-if (savedLang) {
-  currentLang = savedLang;
+let currentLang = localStorage.getItem("intima-lang") || "en";
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem("intima-lang", lang);
+  applyLang();
 }
-updateLangUI();
+window.setLang = setLang;
 
+function applyLang() {
+  const u = UI[currentLang];
+  document.getElementById("lang-en").className = currentLang === "en" ? "active" : "";
+  document.getElementById("lang-es").className = currentLang === "es" ? "active" : "";
+  document.getElementById("home-subtitle").textContent = u.homeSubtitle;
+  document.getElementById("name-input").placeholder = u.namePlaceholder;
+  document.getElementById("start-btn").textContent = u.startBtn;
+  document.getElementById("yes-btn").textContent = u.yesBtn;
+  document.getElementById("no-btn").textContent = u.noBtn;
+  document.getElementById("email-title").textContent = u.emailTitle;
+  document.getElementById("email-input").placeholder = u.emailPlaceholder;
+  document.getElementById("email-subscribe-label").textContent = u.emailSubscribe;
+  document.getElementById("email-continue-btn").textContent = u.emailBtn;
+  document.getElementById("download-pdf-btn").textContent = u.downloadBtn;
+  // Update quiz if active
+  if (index > 0 && index <= QUESTIONS.length) {
+    const q = QUESTIONS[index - 1];
+    document.getElementById("question-counter").textContent = u.questionOf(index, QUESTIONS.length);
+    document.getElementById("question-text").textContent = currentLang === "es" ? q.textEs : q.textEn;
+  }
+}
 
-/***** CONFIG *****/
+// ─── SUPABASE ─────────────────────────────────────────────────────────────────
 const SUPABASE_URL = "https://iftsefgvuzbcsucsqwxo.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmdHNlZmd2dXpiY3N1Y3Nxd3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1NjY1MzUsImV4cCI6MjA4MTE0MjUzNX0.1vEVdfMFe9I9DUfiml5zV6s0a2vIz8z5yXL2xSOanBE";
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
-
-/***** QUESTIONS (short placeholder – you already have full set) *****/
+// ─── QUESTIONS ────────────────────────────────────────────────────────────────
 const QUESTIONS = [
-  // Questionnaire #1 — Physical Suggestibility
   { questionnaire:1, weight:10, textEn:"Have you ever walked in your sleep during your adult life?", textEs:"¿Alguna vez has caminado dormido durante tu vida adulta?" },
   { questionnaire:1, weight:10, textEn:"As a teenager, did you feel comfortable expressing your feelings to one or both of your parents?", textEs:"Cuando eras adolescente, ¿te sentías cómodo expresando tus sentimientos a uno o ambos padres?" },
-  { questionnaire:1, weight:5, textEn:"Do you tend to look directly into a person’s eyes or move closer when discussing something interesting?", textEs:"¿Tiendes a mirar directamente a los ojos o acercarte más a una persona cuando hablas de algo interesante?" },
+  { questionnaire:1, weight:5, textEn:"Do you tend to look directly into a person's eyes or move closer when discussing something interesting?", textEs:"¿Tiendes a mirar directamente a los ojos o acercarte más a una persona cuando hablas de algo interesante?" },
   { questionnaire:1, weight:5, textEn:"Do you feel that most people are uncritical of your appearance when you first meet them?", textEs:"¿Sientes que la mayoría de las personas no juzgan tu apariencia cuando te conocen?" },
-  { questionnaire:1, weight:5, textEn:"In a group of people you’ve just met, would you feel comfortable initiating conversation?", textEs:"En un grupo de personas que acabas de conocer, ¿te sentirías cómodo iniciando una conversación?" },
+  { questionnaire:1, weight:5, textEn:"In a group of people you've just met, would you feel comfortable initiating conversation?", textEs:"En un grupo de personas que acabas de conocer, ¿te sentirías cómodo iniciando una conversación?" },
   { questionnaire:1, weight:5, textEn:"Do you feel comfortable showing physical affection in public with someone you are close to?", textEs:"¿Te sientes cómodo mostrando afecto físico en público con alguien cercano?" },
   { questionnaire:1, weight:5, textEn:"When someone talks about feeling physically warm, do you also begin to feel warm?", textEs:"Cuando alguien habla de sentir calor físico, ¿empiezas tú también a sentir calor?" },
   { questionnaire:1, weight:5, textEn:"Do you sometimes tune out while listening because you are eager to respond?", textEs:"¿A veces dejas de escuchar porque estás ansioso por responder?" },
@@ -197,11 +344,9 @@ const QUESTIONS = [
   { questionnaire:1, weight:5, textEn:"Do you feel comfortable receiving compliments in front of others?", textEs:"¿Te sientes cómodo recibiendo cumplidos delante de otras personas?" },
   { questionnaire:1, weight:5, textEn:"Do you consider yourself a good conversationalist?", textEs:"¿Te consideras un buen conversador?" },
   { questionnaire:1, weight:5, textEn:"Do you feel comfortable when attention is drawn to your appearance?", textEs:"¿Te sientes cómodo cuando se llama la atención sobre tu apariencia?" },
-
-  // Questionnaire #2 — Emotional Suggestibility
   { questionnaire:2, weight:10, textEn:"Have you ever awakened at night unable to move or speak?", textEs:"¿Alguna vez te has despertado por la noche sin poder moverte o hablar?" },
   { questionnaire:2, weight:10, textEn:"As a child, were you more affected by tone of voice than words?", textEs:"Cuando eras niño, ¿te afectaba más el tono de voz que las palabras?" },
-  { questionnaire:2, weight:5, textEn:"If someone talks about a fear you’ve had, do you feel fearful too?", textEs:"Si alguien habla de un miedo que has tenido, ¿sientes miedo también?" },
+  { questionnaire:2, weight:5, textEn:"If someone talks about a fear they’ve had, do you feel afraid too?", textEs:"Si alguien habla de un miedo que ha tenido, ¿sientes miedo también?" },
   { questionnaire:2, weight:5, textEn:"After an argument, do you dwell on what you should have said?", textEs:"Después de una discusión, ¿piensas en lo que deberías haber dicho?" },
   { questionnaire:2, weight:5, textEn:"Do you sometimes tune out because your mind drifts?", textEs:"¿A veces dejas de escuchar porque tu mente divaga?" },
   { questionnaire:2, weight:5, textEn:"Do you feel embarrassed when complimented?", textEs:"¿Te sientes avergonzado cuando te hacen un cumplido?" },
@@ -219,15 +364,8 @@ const QUESTIONS = [
   { questionnaire:2, weight:5, textEn:"Do you find it difficult to verbalize love?", textEs:"¿Te resulta difícil expresar verbalmente el amor?" }
 ];
 
-// === OFFICIAL SCORING TABLE ===
-// X-axis: Combined score (50 → 200, step 5)
-// Y-axis: Physical raw score (0 → 100, step 5)
-// Cell value = % Physical Suggestibility
-
-const COMBINED_AXIS = [
-  50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185,190,195,200
-];
-
+// ─── SCORING ──────────────────────────────────────────────────────────────────
+const COMBINED_AXIS = [50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185,190,195,200];
 const SCORING_TABLE = {
   100:[null,null,null,null,null,null,null,null,null,null,100,95,91,87,83,80,77,74,71,69,67,65,63,61,59,57,56,54,53,51,50],
    95:[null,null,null,null,null,null,null,null,null,100,95,90,86,83,79,76,73,70,68,66,63,61,59,58,56,54,53,51,50,49,48],
@@ -251,433 +389,170 @@ const SCORING_TABLE = {
     5:[10,9,8,8,7,7,6,6,6,5,5,5,5,4,4,4,4,4,4,3,3,3,3,3,3,3,3,3,3,3,3],
     0:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 };
-function snap5(n) {
-  return Math.round(n / 5) * 5;
-}
-
+function snap5(n) { return Math.round(n / 5) * 5; }
 function lookupPhysicalPercent(physicalRaw, combined) {
-  let pr = snap5(physicalRaw);
-  let cs = snap5(combined);
-
-  pr = Math.max(0, Math.min(100, pr));
-  cs = Math.max(50, Math.min(200, cs));
+  let pr = snap5(physicalRaw); let cs = snap5(combined);
+  pr = Math.max(0, Math.min(100, pr)); cs = Math.max(50, Math.min(200, cs));
   if (cs < pr) cs = pr;
-
-  const row = SCORING_TABLE[pr];
-  const idx = COMBINED_AXIS.indexOf(cs);
+  const row = SCORING_TABLE[pr]; const idx = COMBINED_AXIS.indexOf(cs);
   if (!row || idx === -1) return 0;
-
   return row[idx];
 }
 
-/***** INTERPRETATIONS *****/
+// ─── INTERPRETATIONS ─────────────────────────────────────────────────────────
 const INTERPRETATIONS = {
   en: [
-    {
-      min: 0, max: 24,
-      title: "Very Low Physical Suggestibility",
-      text: "Your results suggest a strong emotional responsiveness. You tend to experience the world primarily through feelings, inner states, and emotional meaning rather than physical sensation."
-    },
-    {
-      min: 25, max: 39,
-      title: "Low Physical Suggestibility",
-      text: "You show a tendency toward emotional awareness with a moderate physical response. Reflection and emotional meaning are especially important for you."
-    },
-    {
-      min: 40, max: 59,
-      title: "Balanced Suggestibility",
-      text: "Your profile suggests a balanced blend of physical and emotional responsiveness. You can adapt fluidly to different situations."
-    },
-    {
-      min: 60, max: 74,
-      title: "High Physical Suggestibility",
-      text: "Your results indicate a strong physical responsiveness. Sensory and embodied experiences play an important role for you."
-    },
-    {
-      min: 75, max: 100,
-      title: "Very High Physical Suggestibility",
-      text: "You show a very strong physical suggestibility. Physical sensation, imagery, and embodiment are central to how you process experience."
-    }
+    { min:0, max:24, title:"Very Low Physical Suggestibility", text:"Your results suggest a strong emotional responsiveness. You tend to experience the world primarily through feelings, inner states, and emotional meaning rather than physical sensation." },
+    { min:25, max:39, title:"Low Physical Suggestibility", text:"You show a tendency toward emotional awareness with a moderate physical response. Reflection and emotional meaning are especially important for you." },
+    { min:40, max:59, title:"Balanced Suggestibility", text:"Your profile suggests a balanced blend of physical and emotional responsiveness. You can adapt fluidly to different situations." },
+    { min:60, max:74, title:"High Physical Suggestibility", text:"Your results indicate a strong physical responsiveness. Sensory and embodied experiences play an important role for you." },
+    { min:75, max:100, title:"Very High Physical Suggestibility", text:"You show a very strong physical suggestibility. Physical sensation, imagery, and embodiment are central to how you process experience." }
   ],
   es: [
-    {
-      min: 0, max: 24,
-      title: "Sugestionabilidad Física Muy Baja",
-      text: "Tus resultados indican una fuerte sensibilidad emocional. Tiendes a experimentar el mundo principalmente a través de las emociones."
-    },
-    {
-      min: 25, max: 39,
-      title: "Sugestionabilidad Física Baja",
-      text: "Muestras una mayor orientación emocional con una respuesta física moderada."
-    },
-    {
-      min: 40, max: 59,
-      title: "Sugestionabilidad Equilibrada",
-      text: "Tu perfil sugiere un equilibrio entre la sensibilidad física y emocional."
-    },
-    {
-      min: 60, max: 74,
-      title: "Sugestionabilidad Física Alta",
-      text: "Tus resultados indican una fuerte sensibilidad física y corporal."
-    },
-    {
-      min: 75, max: 100,
-      title: "Sugestionabilidad Física Muy Alta",
-      text: "Presentas una sugestionabilidad física muy elevada. El cuerpo y las sensaciones son centrales para ti."
-    }
+    { min:0, max:24, title:"Sugestionabilidad Física Muy Baja", text:"Tus resultados indican una fuerte sensibilidad emocional. Tiendes a experimentar el mundo principalmente a través de las emociones." },
+    { min:25, max:39, title:"Sugestionabilidad Física Baja", text:"Muestras una mayor orientación emocional con una respuesta física moderada." },
+    { min:40, max:59, title:"Sugestionabilidad Equilibrada", text:"Tu perfil sugiere un equilibrio entre la sensibilidad física y emocional." },
+    { min:60, max:74, title:"Sugestionabilidad Física Alta", text:"Tus resultados indican una fuerte sensibilidad física y corporal." },
+    { min:75, max:100, title:"Sugestionabilidad Física Muy Alta", text:"Presentas una sugestionabilidad física muy elevada. El cuerpo y las sensaciones son centrales para ti." }
   ]
 };
 const GUIDANCE = {
   en: [
-    {
-      min: 0, max: 24,
-      bullets: [
-        "You may process experiences primarily through emotions and inner reflection.",
-        "Tone, mood, and emotional safety are especially important for you.",
-        "You may benefit from environments that allow emotional expression.",
-        "Others may experience you as thoughtful and perceptive."
-      ]
-    },
-    {
-      min: 25, max: 39,
-      bullets: [
-        "You tend to notice emotional nuances quickly.",
-        "Calm, supportive communication works best for you.",
-        "Meaning and reflection guide your decisions.",
-        "You may value emotional connection over stimulation."
-      ]
-    },
-    {
-      min: 40, max: 59,
-      bullets: [
-        "You are flexible in how you respond to experiences.",
-        "You adapt well to different people and environments.",
-        "This balance supports resilience and communication.",
-        "You can engage both emotionally and physically."
-      ]
-    },
-    {
-      min: 60, max: 74,
-      bullets: [
-        "You respond strongly to physical and sensory cues.",
-        "Experiences are often processed through the body first.",
-        "Movement and action help integrate emotions.",
-        "Others may see you as grounded and present."
-      ]
-    },
-    {
-      min: 75, max: 100,
-      bullets: [
-        "You are highly responsive to sensory experiences.",
-        "Embodiment and environment strongly influence you.",
-        "Hands-on learning suits you well.",
-        "Your body often leads emotional processing."
-      ]
-    }
+    { min:0, max:24, bullets:["You may process experiences primarily through emotions and inner reflection.","Tone, mood, and emotional safety are especially important for you.","You may benefit from environments that allow emotional expression.","Others may experience you as thoughtful and perceptive."] },
+    { min:25, max:39, bullets:["You tend to notice emotional nuances quickly.","Calm, supportive communication works best for you.","Meaning and reflection guide your decisions.","You may value emotional connection over stimulation."] },
+    { min:40, max:59, bullets:["You are flexible in how you respond to experiences.","You adapt well to different people and environments.","This balance supports resilience and communication.","You can engage both emotionally and physically."] },
+    { min:60, max:74, bullets:["You respond strongly to physical and sensory cues.","Experiences are often processed through the body first.","Movement and action help integrate emotions.","Others may see you as grounded and present."] },
+    { min:75, max:100, bullets:["You are highly responsive to sensory experiences.","Embodiment and environment strongly influence you.","Hands-on learning suits you well.","Your body often leads emotional processing."] }
   ],
   es: [
-    {
-      min: 0, max: 24,
-      bullets: [
-        "Procesas las experiencias principalmente a través de las emociones.",
-        "El tono y la seguridad emocional son muy importantes para ti.",
-        "Te benefician entornos con profundidad emocional.",
-        "Los demás pueden percibirte como sensible y perceptivo."
-      ]
-    },
-    {
-      min: 25, max: 39,
-      bullets: [
-        "Notas rápidamente los matices emocionales.",
-        "Respondes mejor a una comunicación calmada.",
-        "El significado guía tus decisiones.",
-        "Valoras la conexión emocional."
-      ]
-    },
-    {
-      min: 40, max: 59,
-      bullets: [
-        "Eres flexible en tus respuestas.",
-        "Te adaptas bien a diferentes entornos.",
-        "Este equilibrio favorece la resiliencia.",
-        "Puedes involucrarte emocional y físicamente."
-      ]
-    },
-    {
-      min: 60, max: 74,
-      bullets: [
-        "Respondes con fuerza a señales físicas.",
-        "Las emociones se procesan a través del cuerpo.",
-        "El movimiento ayuda a integrar emociones.",
-        "Se te percibe como presente y conectado."
-      ]
-    },
-    {
-      min: 75, max: 100,
-      bullets: [
-        "Eres muy sensible a experiencias físicas.",
-        "El cuerpo y el entorno influyen mucho en ti.",
-        "Aprendes mejor de forma experiencial.",
-        "El cuerpo guía tu procesamiento emocional."
-      ]
-    }
+    { min:0, max:24, bullets:["Procesas las experiencias principalmente a través de las emociones.","El tono y la seguridad emocional son muy importantes para ti.","Te benefician entornos con profundidad emocional.","Los demás pueden percibirte como sensible y perceptivo."] },
+    { min:25, max:39, bullets:["Notas rápidamente los matices emocionales.","Respondes mejor a una comunicación calmada.","El significado guía tus decisiones.","Valoras la conexión emocional."] },
+    { min:40, max:59, bullets:["Eres flexible en tus respuestas.","Te adaptas bien a diferentes entornos.","Este equilibrio favorece la resiliencia.","Puedes involucrarte emocional y físicamente."] },
+    { min:60, max:74, bullets:["Respondes con fuerza a señales físicas.","Las emociones se procesan a través del cuerpo.","El movimiento ayuda a integrar emociones.","Se te percibe como presente y conectado."] },
+    { min:75, max:100, bullets:["Eres muy sensible a experiencias físicas.","El cuerpo y el entorno influyen mucho en ti.","Aprendes mejor de forma experiencial.","El cuerpo guía tu procesamiento emocional."] }
   ]
 };
 
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let index = 0, scoreQ1 = 0, scoreQ2 = 0;
+let capturedEmail = null, participantName = null;
 
-/***** STATE *****/
-let index = 0;
-let scoreQ1 = 0;
-let scoreQ2 = 0;
-let capturedEmail = null;
-let participantName = null;
-
-/***** ELEMENTS *****/
 const screens = {
   home: document.getElementById("screen-home"),
   quiz: document.getElementById("screen-quiz"),
   email: document.getElementById("screen-email"),
   result: document.getElementById("screen-result")
 };
-
-const questionText = document.getElementById("question-text");
-const counter = document.getElementById("question-counter");
-
 function showScreen(name) {
   Object.values(screens).forEach(s => s.classList.add("hidden"));
   screens[name].classList.remove("hidden");
 }
-
 function showQuestion() {
   const q = QUESTIONS[index];
-  counter.textContent = `Question ${index+1} of ${QUESTIONS.length}`;
-  questionText.textContent = currentLang === "es" ? q.textEs : q.textEn;
+  const u = UI[currentLang];
+  document.getElementById("question-counter").textContent = u.questionOf(index + 1, QUESTIONS.length);
+  document.getElementById("question-text").textContent = currentLang === "es" ? q.textEs : q.textEn;
+  document.getElementById("progress-bar").style.width = `${(index / QUESTIONS.length) * 100}%`;
 }
-
 function answer(yes) {
   const q = QUESTIONS[index];
-  if (yes) {
-    if (q.questionnaire === 1) scoreQ1 += q.weight;
-    else scoreQ2 += q.weight;
-  }
+  if (yes) { if (q.questionnaire === 1) scoreQ1 += q.weight; else scoreQ2 += q.weight; }
   index++;
-  if (index < QUESTIONS.length) showQuestion();
-  else showScreen("email");
+  if (index < QUESTIONS.length) showQuestion(); else showScreen("email");
 }
 
-function finishQuiz() {
-document.querySelector("#screen-result h2").textContent =
-  `${participantName}, here are your results`;
+async function finishQuiz() {
+  const u = UI[currentLang];
+  const physicalRaw = scoreQ1, emotionalRaw = scoreQ2;
+  const combined = physicalRaw + emotionalRaw;
+  const physicalPercent = lookupPhysicalPercent(physicalRaw, combined);
+  const emotionalPercent = 100 - physicalPercent;
+  const interp = INTERPRETATIONS[currentLang].find(r => physicalPercent >= r.min && physicalPercent <= r.max);
+  const guidance = GUIDANCE[currentLang].find(r => physicalPercent >= r.min && physicalPercent <= r.max);
 
-const physicalRaw = scoreQ1;
-const emotionalRaw = scoreQ2;
-const combined = physicalRaw + emotionalRaw;
-
-const physicalPercent = lookupPhysicalPercent(physicalRaw, combined);
-const emotionalPercent = 100 - physicalPercent;
-
-
-  document.getElementById("result-physical").textContent = `Physical: ${physicalPercent}%`;
-  document.getElementById("result-emotional").textContent = `Emotional: ${emotionalPercent}%`;
-
-const interp = INTERPRETATIONS[currentLang].find(
-  r => physicalPercent >= r.min && physicalPercent <= r.max
-);
-
+  // Result screen
+  document.getElementById("result-name-title").textContent = u.resultTitle(participantName);
+  document.getElementById("result-physical").textContent = u.physical(physicalPercent);
+  document.getElementById("result-emotional").textContent = u.emotional(emotionalPercent);
   document.getElementById("interpretation-title").textContent = interp.title;
   document.getElementById("interpretation-text").textContent = interp.text;
-const guidance = GUIDANCE[currentLang].find(
-  r => physicalPercent >= r.min && physicalPercent <= r.max
-);
+  const listEl = document.getElementById("guidance-list");
+  listEl.innerHTML = "";
+  guidance.bullets.forEach(b => { const li = document.createElement("li"); li.textContent = b; listEl.appendChild(li); });
 
-const listEl = document.getElementById("guidance-list");
-listEl.innerHTML = "";
+  // PDF content
+  document.getElementById("pdf-name").textContent = `${participantName}'s Results`;
+  document.getElementById("pdf-physical").textContent = u.pdfPhysical(physicalPercent);
+  document.getElementById("pdf-emotional").textContent = u.pdfEmotional(emotionalPercent);
+  document.getElementById("pdf-title").textContent = interp.title;
+  document.getElementById("pdf-text").textContent = interp.text;
+  const pdfList = document.getElementById("pdf-guidance");
+  pdfList.innerHTML = "";
+  guidance.bullets.forEach(b => { const li = document.createElement("li"); li.textContent = b; li.style.marginBottom = "6px"; pdfList.appendChild(li); });
 
-guidance.bullets.forEach(bullet => {
-  const li = document.createElement("li");
-  li.textContent = bullet;
-  li.style.marginBottom = "8px";
-  listEl.appendChild(li);
-});
-// ===== Populate PDF content =====
-document.getElementById("pdf-name").textContent =
-  `${participantName}'s Results`;
-
-document.getElementById("pdf-physical").textContent =
-  `Physical Suggestibility: ${physicalPercent}%`;
-
-document.getElementById("pdf-emotional").textContent =
-  `Emotional Suggestibility: ${emotionalPercent}%`;
-
-document.getElementById("pdf-title").textContent = interp.title;
-document.getElementById("pdf-text").textContent = interp.text;
-
-const pdfList = document.getElementById("pdf-guidance");
-pdfList.innerHTML = "";
-
-guidance.bullets.forEach(bullet => {
-  const li = document.createElement("li");
-  li.textContent = bullet;
-  li.style.marginBottom = "6px";
-  pdfList.appendChild(li);
-});
-// ===== SEND RESULTS EMAIL =====
-if (capturedEmail) {
-  fetch("/api/send-email", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name: participantName,
-      email: capturedEmail,
-      physicalPercent: physicalPercent,
-      emotionalPercent: emotionalPercent,
-      resultTitle: interp.title,
-      resultText: interp.text,
-      subscribed: window.isSubscribed || false
-    })
-  })
-
-    .then(res => res.json())
-    .then(data => {
-      console.log("✅ Email sent:", data);
-    })
-    .catch(err => {
-      console.error("❌ Email error:", err);
-    });
-}
-
-(async () => {
-  const { data, error } = await supabase.from("results").insert([{
-    name: participantName,
-    email: capturedEmail,
-    physicalRaw,
-    emotionalRaw,
-    combined,
-    physicalPercent,
-    emotionalPercent,
-    subscribed: window.isSubscribed || false
-  }]);
-
-  if (error) {
-    console.error("❌ Supabase insert error:", error);
-    alert("There was a problem saving your results. Please try again later.");
-  } else {
-    console.log("✅ Result saved to Supabase:", data);
+  // Send email
+  if (capturedEmail) {
+    fetch("/api/send-email", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: participantName, email: capturedEmail, physicalPercent, emotionalPercent, resultTitle: interp.title, resultText: interp.text, subscribed: window.isSubscribed || false })
+    }).catch(err => console.error("Email error:", err));
   }
 
+  // Save to Supabase
+  const { error } = await supabase.from("results").insert([{ name: participantName, email: capturedEmail, physicalRaw, emotionalRaw, combined, physicalPercent, emotionalPercent, subscribed: window.isSubscribed || false }]);
+  if (error) console.error("Supabase error:", error);
+
   showScreen("result");
-  // ── Send results to Michelangelo AI ──
+
+  // Sync to Michelangelo AI if client_id present
   const urlParams = new URLSearchParams(window.location.search);
   const michelangeloClientId = urlParams.get("client_id");
-
   if (michelangeloClientId) {
     try {
       await fetch("https://michelangelo-ai.vercel.app/api/assessments/save-results", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          client_id: michelangeloClientId,
-          assessment_type: "suggestibility",
-          secret: "flowgenics-mich-2025-xK9p",
-          results: {
-            dominant: physicalPercent >= 50 ? "Physical" : "Emotional",
-            physical_percent: physicalPercent,
-            emotional_percent: emotionalPercent,
-            completed_at: new Date().toISOString()
-          }
-        })
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client_id: michelangeloClientId, assessment_type: "suggestibility", secret: "flowgenics-mich-2025-xK9p", results: { dominant: physicalPercent >= 50 ? "Physical" : "Emotional", physical_percent: physicalPercent, emotional_percent: emotionalPercent, completed_at: new Date().toISOString() } })
       });
-    } catch(e) {
-      console.log("Michelangelo sync skipped", e);
-    }
+    } catch(e) { console.log("Michelangelo sync skipped", e); }
     document.getElementById("back-to-michelangelo").style.display = "block";
+    document.querySelector("#back-to-michelangelo button").textContent = u.backBtn;
   }
-})();
-
-
-
-  showScreen("result");
-}
-function updateLangUI() {
-  document.getElementById("lang-en").style.opacity =
-    currentLang === "en" ? "1" : "0.5";
-
-  document.getElementById("lang-es").style.opacity =
-    currentLang === "es" ? "1" : "0.5";
 }
 
-/***** EVENTS *****/
+// ─── EVENTS ───────────────────────────────────────────────────────────────────
 document.getElementById("start-btn").onclick = () => {
   const nameValue = document.getElementById("name-input").value.trim();
-
-  if (!nameValue) {
-    alert("Please enter your name to begin.");
-    return;
-  }
-
-  participantName = nameValue;
-  index = 0;
-  showScreen("quiz");
-  showQuestion();
+  if (!nameValue) { alert(UI[currentLang].nameAlert); return; }
+  participantName = nameValue; index = 0; scoreQ1 = 0; scoreQ2 = 0;
+  showScreen("quiz"); showQuestion();
 };
-
 document.getElementById("yes-btn").onclick = () => answer(true);
 document.getElementById("no-btn").onclick = () => answer(false);
 document.getElementById("email-continue-btn").onclick = () => {
   const emailValue = document.getElementById("email-input").value.trim();
   const subscribed = document.getElementById("subscribed-checkbox").checked;
-
-  if (!emailValue) {
-    alert("Please enter your email to view your results.");
-    return;
-  }
-
-  capturedEmail = emailValue;
-  window.isSubscribed = subscribed; // make it globally accessible
-  finishQuiz();
+  if (!emailValue) { alert(UI[currentLang].emailAlert); return; }
+  capturedEmail = emailValue; window.isSubscribed = subscribed; finishQuiz();
 };
 
+// PDF — fixed
 document.getElementById("download-pdf-btn").onclick = () => {
   const pdfEl = document.getElementById("pdf-template");
-
-  // Temporarily show PDF template
   pdfEl.style.display = "block";
-
-  html2pdf({
+  html2pdf().set({
     margin: 10,
     filename: "INTIMA_Result.pdf",
     html2canvas: { scale: 2 },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-  })
-    .from(pdfEl)
-    .save()
-    .then(() => {
-      // Hide it again after export
-      pdfEl.style.display = "none";
-    });
+  }).from(pdfEl).save().then(() => { pdfEl.style.display = "none"; });
 };
 
-
-document.getElementById("lang-en").onclick = () => {
-  currentLang = "en";
-  localStorage.setItem("intima-lang", "en");
-  updateLangUI();
-};
-
-document.getElementById("lang-es").onclick = () => {
-  currentLang = "es";
-  localStorage.setItem("intima-lang", "es");
-  updateLangUI();
-};
-
-
-
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+applyLang();
 </script>
 </body>
-
 </html>
+
 
 
 

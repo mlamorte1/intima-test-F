@@ -19,14 +19,16 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-      background-color: #1a0f00;
-      background-image:
-        radial-gradient(ellipse at 20% 20%, rgba(200,164,21,0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(120,80,10,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(15,8,0,0.9) 0%, transparent 100%);
+      background-image: url('./marble.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       color: #f0dfa0;
     }
     .card {
+      position: relative;
+      z-index: 1;
       max-width: 540px;
       width: 100%;
       padding: 36px 32px;
@@ -77,10 +79,9 @@
       background: radial-gradient(circle at 40% 35%, #2a1c06, #050304);
       box-shadow: 0 0 40px rgba(200,164,21,0.2);
       display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
       border: 1px solid rgba(200,164,21,0.2);
     }
-    .logo-wrap img { width: 85%; height: auto; object-fit: contain; }
+    .logo-wrap img { width: 100%; height: auto; object-fit: contain; }
     .logo-small { width: 70px; height: 70px; margin-bottom: 12px; }
     .lang-toggle {
       display: inline-flex; gap: 4px;
@@ -170,6 +171,9 @@
 </head>
 <body>
 
+<!-- Marble overlay -->
+<div style="position:fixed;inset:0;background:rgba(10,6,2,0.62);pointer-events:none;z-index:0;"></div>
+
 <!-- HOME -->
 <div id="screen-home" class="card">
   <div class="logo-wrap">
@@ -234,13 +238,36 @@
 
 <!-- PDF TEMPLATE -->
 <div id="pdf-template">
-  <h1 style="text-align:center;">INTIMA by Flowgenics – Suggestibility Profile</h1>
-  <p id="pdf-name"></p><hr>
-  <p id="pdf-physical"></p>
-  <p id="pdf-emotional"></p>
-  <h3 id="pdf-title"></h3>
-  <p id="pdf-text"></p>
-  <ul id="pdf-guidance"></ul>
+  <div style="background:#0b0b0b; color:#fef9c3; padding:40px; font-family:Georgia, serif; border-radius:12px;">
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:28px;">
+      <img src="./intima-logo.png" width="90" alt="INTIMA" style="margin-bottom:16px; display:block; margin-left:auto; margin-right:auto;" />
+      <h1 style="color:#facc15; font-size:22px; font-weight:400; letter-spacing:2px; margin:0 0 4px;">INTIMA</h1>
+      <p style="color:rgba(200,164,21,0.5); font-size:11px; letter-spacing:3px; text-transform:uppercase; margin:0;">Suggestibility Profile · Flowgenics</p>
+    </div>
+    <hr style="border:none; border-top:1px solid rgba(200,164,21,0.2); margin-bottom:28px;" />
+    <!-- Name -->
+    <p id="pdf-name" style="color:rgba(240,223,160,0.6); font-size:13px; text-align:center; margin-bottom:20px;"></p>
+    <!-- Scores -->
+    <div style="display:flex; gap:16px; justify-content:center; margin-bottom:24px;">
+      <div style="background:rgba(200,164,21,0.1); border:1px solid rgba(200,164,21,0.3); border-radius:999px; padding:10px 24px; text-align:center;">
+        <p id="pdf-physical" style="color:#c8a415; font-size:15px; font-weight:600; margin:0;"></p>
+      </div>
+      <div style="background:rgba(200,164,21,0.1); border:1px solid rgba(200,164,21,0.3); border-radius:999px; padding:10px 24px; text-align:center;">
+        <p id="pdf-emotional" style="color:#c8a415; font-size:15px; font-weight:600; margin:0;"></p>
+      </div>
+    </div>
+    <!-- Interpretation -->
+    <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(200,164,21,0.15); border-radius:12px; padding:24px; margin-bottom:24px;">
+      <h2 id="pdf-title" style="color:#facc15; font-size:18px; font-weight:400; margin:0 0 12px;"></h2>
+      <p id="pdf-text" style="color:rgba(240,223,160,0.8); font-size:14px; line-height:1.7; margin:0;"></p>
+    </div>
+    <!-- Guidance -->
+    <ul id="pdf-guidance" style="color:rgba(240,223,160,0.7); font-size:13px; line-height:1.8; padding-left:20px;"></ul>
+    <!-- Footer -->
+    <hr style="border:none; border-top:1px solid rgba(200,164,21,0.15); margin:28px 0 16px;" />
+    <p style="text-align:center; font-size:12px; color:rgba(200,164,21,0.4);">www.flowgenicscoaching.com</p>
+  </div>
 </div>
 
 <script type="module">
@@ -346,7 +373,7 @@ const QUESTIONS = [
   { questionnaire:1, weight:5, textEn:"Do you feel comfortable when attention is drawn to your appearance?", textEs:"¿Te sientes cómodo cuando se llama la atención sobre tu apariencia?" },
   { questionnaire:2, weight:10, textEn:"Have you ever awakened at night unable to move or speak?", textEs:"¿Alguna vez te has despertado por la noche sin poder moverte o hablar?" },
   { questionnaire:2, weight:10, textEn:"As a child, were you more affected by tone of voice than words?", textEs:"Cuando eras niño, ¿te afectaba más el tono de voz que las palabras?" },
-  { questionnaire:2, weight:5, textEn:"If someone talks about a fear they’ve had, do you feel afraid too?", textEs:"Si alguien habla de un miedo que ha tenido, ¿sientes miedo también?" },
+  { questionnaire:2, weight:5, textEn:"If someone talks about a fear you've had, do you feel fearful too?", textEs:"Si alguien habla de un miedo que has tenido, ¿sientes miedo también?" },
   { questionnaire:2, weight:5, textEn:"After an argument, do you dwell on what you should have said?", textEs:"Después de una discusión, ¿piensas en lo que deberías haber dicho?" },
   { questionnaire:2, weight:5, textEn:"Do you sometimes tune out because your mind drifts?", textEs:"¿A veces dejas de escuchar porque tu mente divaga?" },
   { questionnaire:2, weight:5, textEn:"Do you feel embarrassed when complimented?", textEs:"¿Te sientes avergonzado cuando te hacen un cumplido?" },
@@ -552,6 +579,7 @@ applyLang();
 </script>
 </body>
 </html>
+
 
 
 

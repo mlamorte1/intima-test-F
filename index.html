@@ -550,13 +550,15 @@ async function finishQuiz() {
 // viejo vercel.app, donde el cliente no tiene sesión de navegador, y a /chat
 // en vez de /session). Espejo exacto de la lógica del page_result.js de
 // Fortalezas: si M AI algún día pasa ?return_to=..., se respeta (debe ser
-// una ruta relativa, ej. /assessments); si no, /session.
-function backToMichelangelo() {
+// una ruta relativa, ej. /assessments); si no, /session. Va en window.
+// porque este script es type="module" y el onclick inline del boton
+// solo resuelve contra el scope global.
+window.backToMichelangelo = function () {
   const base = 'https://michelangeloai.flowgenicscoaching.com';
   const rt = new URLSearchParams(window.location.search).get('return_to');
   const dest = (typeof rt === 'string' && rt.startsWith('/')) ? rt : '/session';
   window.location.href = base + dest;
-}
+};
 
 // ─── EVENTS ───────────────────────────────────────────────────────────────────
 document.getElementById("start-btn").onclick = () => {

@@ -230,7 +230,7 @@
   <div class="divider"></div>
   <button class="btn" id="download-pdf-btn">⬇ Download PDF</button>
   <div id="back-to-michelangelo" style="display:none; margin-top:12px;">
-    <button class="btn btn-secondary" onclick="window.location.href='https://michelangelo-ai.vercel.app/chat'">
+    <button class="btn btn-secondary" onclick="backToMichelangelo()">
       ← Back to Michelangelo AI
     </button>
   </div>
@@ -536,7 +536,7 @@ async function finishQuiz() {
   const michelangeloClientId = urlParams.get("client_id");
   if (michelangeloClientId) {
     try {
-      await fetch("https://michelangelo-ai.vercel.app/api/assessments/save-results", {
+      await fetch("https://michelangeloai.flowgenicscoaching.com/api/assessments/save-results", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ client_id: michelangeloClientId, assessment_type: "suggestibility", secret: "flowgenics-mich-2025-xK9p", results: { dominant: physicalPercent >= 50 ? "Physical" : "Emotional", physical_percent: physicalPercent, emotional_percent: emotionalPercent, completed_at: new Date().toISOString() } })
       });
@@ -544,6 +544,18 @@ async function finishQuiz() {
     document.getElementById("back-to-michelangelo").style.display = "block";
     document.querySelector("#back-to-michelangelo button").textContent = u.backBtn;
   }
+}
+
+// FIX (22-jul): retorno al dominio CANÓNICO (antes iba al alias
+// viejo vercel.app, donde el cliente no tiene sesión de navegador, y a /chat
+// en vez de /session). Espejo exacto de la lógica del page_result.js de
+// Fortalezas: si M AI algún día pasa ?return_to=..., se respeta (debe ser
+// una ruta relativa, ej. /assessments); si no, /session.
+function backToMichelangelo() {
+  const base = 'https://michelangeloai.flowgenicscoaching.com';
+  const rt = new URLSearchParams(window.location.search).get('return_to');
+  const dest = (typeof rt === 'string' && rt.startsWith('/')) ? rt : '/session';
+  window.location.href = base + dest;
 }
 
 // ─── EVENTS ───────────────────────────────────────────────────────────────────

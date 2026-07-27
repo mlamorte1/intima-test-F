@@ -536,9 +536,11 @@ async function finishQuiz() {
   const michelangeloClientId = urlParams.get("client_id");
   if (michelangeloClientId) {
     try {
+      // Fase 2 (jul-2026): esta app es vanilla sin build — el secret vive
+      // directo aquí. Rotaciones futuras: editar este valor a mano.
       await fetch("https://michelangeloai.flowgenicscoaching.com/api/assessments/save-results", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ client_id: michelangeloClientId, assessment_type: "suggestibility", secret: "flowgenics-mich-2025-xK9p", results: { dominant: physicalPercent >= 50 ? "Physical" : "Emotional", physical_percent: physicalPercent, emotional_percent: emotionalPercent, completed_at: new Date().toISOString() } })
+        body: JSON.stringify({ client_id: michelangeloClientId, assessment_type: "suggestibility", secret: "REEMPLAZAR_CON_EL_SECRET_NUEVO_ANTES_DE_COMMITEAR", results: { dominant: physicalPercent >= 50 ? "Physical" : "Emotional", physical_percent: physicalPercent, emotional_percent: emotionalPercent, completed_at: new Date().toISOString() } })
       });
     } catch(e) { console.log("Michelangelo sync skipped", e); }
     document.getElementById("back-to-michelangelo").style.display = "block";

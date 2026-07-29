@@ -315,7 +315,11 @@ const UI = {
   }
 };
 
-let currentLang = localStorage.getItem("intima-lang") || "en";
+const urlLang = new URLSearchParams(window.location.search).get("lang");
+let currentLang = (urlLang === "en" || urlLang === "es")
+  ? urlLang
+  : (localStorage.getItem("intima-lang") || "en");
+if (urlLang === "en" || urlLang === "es") localStorage.setItem("intima-lang", urlLang);
 
 function setLang(lang) {
   currentLang = lang;

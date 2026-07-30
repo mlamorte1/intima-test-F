@@ -525,7 +525,7 @@ async function finishQuiz() {
   if (capturedEmail) {
     fetch("/api/send-email", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: participantName, email: capturedEmail, physicalPercent, emotionalPercent, resultTitle: interp.title, resultText: interp.text, subscribed: window.isSubscribed || false })
+      body: JSON.stringify({ name: participantName, email: capturedEmail, physicalPercent, emotionalPercent, resultTitle: interp.title, resultText: interp.text, subscribed: window.isSubscribed || false, lang: currentLang, client_id: new URLSearchParams(window.location.search).get("client_id") || null })
     }).catch(err => console.error("Email error:", err));
   }
 
